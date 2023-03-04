@@ -1,0 +1,11 @@
+{
+  "port": 8080,
+  "mongoUrl": "mongodb+srv://jubaer:0JRXvPK4VCJyAyRZ@cluster0.zsxhu.mongodb.net/lms?retryWrites=true&w=majority",
+  "DB_DEBUG" : true,
+  "JWT_SECRET" : "jwt-secret",
+  "JWT_SECRET_EXPIRATION" : "1d",
+  "rabbitmqUrl": "amqp://localhost",
+  "rabbitmqExchange": "users-service-exchange",
+  "rabbitmqQueue": "users-service-queue",
+  "rabbitmqRoutingKey": "users.#"
+}
