@@ -1,7 +1,8 @@
 const { AuthenticationError } = require("apollo-server-express");
 const { createToken } = require("../../utils/auth");
 const Admin = require("../../models/admin");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
+const { v4: uuidv4 } = require("uuid");
 
 const adminResolver = {
   Query: {
@@ -35,6 +36,7 @@ const adminResolver = {
 
         // Create admin instance
         const newAdmin = new Admin({
+          id: uuidv4(),
           name,
           email,
           password: hashedPassword,
@@ -43,10 +45,11 @@ const adminResolver = {
         // Save admin to database
         await newAdmin.save();
         // Return admin
-        const token = createToken(newAdmin);
         return {
-          token,
-          admin: newAdmin,
+          id: newAdmin.id,
+          name : newAdmin.name,
+          email: newAdmin.email,
+          role : newAdmin.role,
         };
       } catch (error) {
         throw new Error(error);
@@ -54,20 +57,18 @@ const adminResolver = {
     },
 
     async adminLogin(_, { email, password }) {
-
-
       const admin = await Admin.findOne({ email });
-    
+
       if (!admin) {
-        throw new AuthenticationError('Invalid email or password');
+        throw new AuthenticationError("Invalid email or password");
       }
-    
+
       const validPassword = await bcrypt.compare(password, admin.password);
-    
+
       if (!validPassword) {
-        throw new AuthenticationError('Invalid email or password');
+        throw new AuthenticationError("Invalid email or password");
       }
-    
+
       const token = createToken(admin);
       return new Promise((resolve, reject) => {
         resolve({
